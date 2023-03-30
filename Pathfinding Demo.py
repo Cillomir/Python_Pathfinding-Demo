@@ -21,7 +21,7 @@ screen = pygame.display.set_mode()
 
 
 # Define a function to print text to the screen in size 48 font
-def Print(text, color, pos_x, pos_y):
+def pg_print(text, color, pos_x, pos_y):
     font_type = pygame.font.SysFont(None, 48)
     font_text = font_type.render(text, True, color)
     screen.blit(font_text, (pos_x, pos_y))
@@ -66,17 +66,17 @@ for width in range(0, Grid_Width):
         Grid_Nodes.append([width, height])
 
 
-def Map_Update():
+def map_update():
     # Run another loop, now to draw the grid onto the screen
     for x in range(0, Grid_Width):
         for y in range(0, Grid_Height):
             # search the list of walls previously defined
             if [x, y] not in All_Walls:
                 # Define a formula to place each generated node based on its generated coordinates
-                Node_x = (x * (Node + Spacing)) + Grid_Start[0]
-                Node_y = (y * (Node + Spacing)) + Grid_Start[1]
+                node_x = (x * (Node + Spacing)) + Grid_Start[0]
+                node_y = (y * (Node + Spacing)) + Grid_Start[1]
                 # Draw a gray rectangle on the screen for each grid node generated
-                pygame.draw.rect(screen, gray, (Node_x, Node_y, Node, Node))
+                pygame.draw.rect(screen, gray, (node_x, node_y, Node, Node))
 
 
 # *****~~~~****~~~***~~**~ LEGAL MOVES ~**~~***~~~****~~~~*****
@@ -109,12 +109,12 @@ def legal_moves(position):
                         open_list.append(new_pos)
     # Highlight the squares within range and label their coordinates
     for x in range(0, len(all_new)):
-        Node_x = (all_new[x][0] * (Node + Spacing)) + Grid_Start[0]
-        Node_y = (all_new[x][1] * (Node + Spacing)) + Grid_Start[1]
-        Label_x = (all_new[x][0] * (Node + Spacing)) + Grid_Start[0] + 16
-        Label_y = (all_new[x][1] * (Node + Spacing)) + Grid_Start[1] + 32
-        pygame.draw.rect(screen, green, (Node_x, Node_y, Node, Node))
-        Print(str(all_new[x]), black, Label_x, Label_y)
+        node_x = (all_new[x][0] * (Node + Spacing)) + Grid_Start[0]
+        node_y = (all_new[x][1] * (Node + Spacing)) + Grid_Start[1]
+        label_x = (all_new[x][0] * (Node + Spacing)) + Grid_Start[0] + 16
+        label_y = (all_new[x][1] * (Node + Spacing)) + Grid_Start[1] + 32
+        pygame.draw.rect(screen, green, (node_x, node_y, Node, Node))
+        pg_print(str(all_new[x]), black, label_x, label_y)
 
 
 # *****~~~~****~~~***~~**~ SELECTOR ~**~~***~~~****~~~~*****
@@ -172,10 +172,10 @@ class Selector(pygame.sprite.Sprite):
         # Return the move commands back to 0
         self.move_x = self.move_y = 0
         # Define a formula to place each selector based on its grid node
-        Node_x = (self.node[0] * (Node + Spacing)) + Grid_Start[0]
-        Node_y = (self.node[1] * (Node + Spacing)) + Grid_Start[1]
+        node_x = (self.node[0] * (Node + Spacing)) + Grid_Start[0]
+        node_y = (self.node[1] * (Node + Spacing)) + Grid_Start[1]
         # Reposition the selector based on the new node coordinates
-        self.rect.topleft = (Node_x, Node_y)
+        self.rect.topleft = (node_x, node_y)
         # Update the global variable of the selectors current position
         # Ensure to convert the node from a float to an integer
         global cur_pos
@@ -192,17 +192,22 @@ while running:
     screen.fill(white)    
     # *****~~~~****~~~***~~**~ SYSTEM EVENTS ~**~~***~~~****~~~~*****
     for event in pygame.event.get():
-        if event.type == pygame.QUIT: running = False
+        if event.type == pygame.QUIT:
+            running = False
         # ***---***---***-- KEYBOARD COMMANDS --***---***---***
         if event.type == KEYDOWN:
-            if event.key == K_LEFT: selector.move_x = -1
-            elif event.key == K_RIGHT: selector.move_x = 1
-            elif event.key == K_UP: selector.move_y = -1
-            elif event.key == K_DOWN: selector.move_y = 1
+            if event.key == K_LEFT:
+                selector.move_x = -1
+            elif event.key == K_RIGHT:
+                selector.move_x = 1
+            elif event.key == K_UP:
+                selector.move_y = -1
+            elif event.key == K_DOWN:
+                selector.move_y = 1
             if event.key == K_ESCAPE:
                 running = False
     # *****~~~~****~~~***~~**~ DRAW VISUALS ~**~~***~~~****~~~~*****
-    Map_Update()
+    map_update()
     All_Selector.draw(screen)
     All_Selector.update()
     all_new = []
